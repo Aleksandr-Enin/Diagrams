@@ -12,6 +12,11 @@ import static org.junit.Assert.*;
 
 public class DiagramTest {
     @Test
+    public void v() throws Exception {
+        test.V();
+    }
+
+    @Test
     public void dfs() throws Exception {
 
     }

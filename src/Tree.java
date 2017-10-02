@@ -13,7 +13,7 @@ public class Tree {
     public String toString() {
         String result = "";
         for (Edge edge: edges) {
-            result += "(" + edge.a + 1 + " " + edge.b +1 + " " + edge.number + ") ";
+            result += "(" + (edge.a + 1) + " " + (edge.b +1) + " " + edge.number + ") ";
         }
         return result;
     }
@@ -23,10 +23,16 @@ public class Tree {
         newEdges.add(edge);
         return new Tree(newEdges);
     }
-
+/*
     public Tree add(List<Edge> e) {
         TreeSet<Edge> newEdges = new TreeSet<>(edges);
         newEdges.addAll(e);
+        return new Tree(newEdges);
+    }
+*/
+    public Tree remove(Edge edge) {
+        TreeSet<Edge> newEdges = new TreeSet<>(edges);
+        newEdges.remove(edge);
         return new Tree(newEdges);
     }
 

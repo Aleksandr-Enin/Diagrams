@@ -1,19 +1,23 @@
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Diagram {
     ArrayList<Edge> edges;
     ArrayList<Tree> trees;
+    HashSet<Tree> doubleTrees;
     int n;
 
     public Diagram() {
         readDiagram();
         trees = generateTrees(n, edges, findSpanningTree());
+        doubleTrees = new HashSet<>();
+        for (Tree tree: trees) {
+            for (Edge edge: tree.edges) {
+                doubleTrees.add(tree.remove(edge));
+            }
+        }
     }
 
     public void printEdges(ArrayList<Edge> edges) {
@@ -144,9 +148,12 @@ public class Diagram {
     }
 
     public String V() {
-
-
-        return "";
+        String result = "";
+        for (Tree tree: doubleTrees) {
+            result += tree;
+            System.out.println(tree);
+        }
+        return result;
     }
 
     public String det() {
@@ -161,12 +168,16 @@ public class Diagram {
         return result;
     }
 
+    private ArrayList<Edge> getCompletion(Tree tree) {
+        ArrayList<Edge> complementEdges = new ArrayList<>(edges);
+        complementEdges.removeAll(tree.edges);
+        return complementEdges;
+    }
+
     public ArrayList<ArrayList<Edge>> getCompletion(ArrayList<Tree> trees) {
         ArrayList<ArrayList<Edge>> result = new ArrayList<>();
         for (Tree tree:trees) {
-            ArrayList<Edge> complementEdges = new ArrayList<>(edges);
-            complementEdges.removeAll(tree.edges);
-            result.add(complementEdges);
+            result.add(getCompletion(tree));
         }
         return result;
     }
