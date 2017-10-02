@@ -6,7 +6,8 @@ import java.util.*;
 public class Diagram {
     ArrayList<Edge> edges;
     ArrayList<Tree> trees;
-    HashSet<Tree> doubleTrees;
+    HashSet<TwoTree> doubleTrees;
+    String[] impulses;
     int n;
 
     public Diagram() {
@@ -15,7 +16,7 @@ public class Diagram {
         doubleTrees = new HashSet<>();
         for (Tree tree: trees) {
             for (Edge edge: tree.edges) {
-                doubleTrees.add(tree.remove(edge));
+                doubleTrees.add(new TwoTree(tree, edge));
             }
         }
     }
@@ -148,10 +149,22 @@ public class Diagram {
     }
 
     public String V() {
+        System.out.println("Trees found: " + doubleTrees.size());
         String result = "";
-        for (Tree tree: doubleTrees) {
-            result += tree;
-            System.out.println(tree);
+        for (TwoTree tree: doubleTrees) {
+            //result += tree;
+            for (Edge edge: getCompletion(tree.edges)) {
+                System.out.print(edge.number);
+            }
+            System.out.println("\nFirst component");
+            for (int vertice: tree.firstVertices) {
+                System.out.print(impulses[vertice] + ", ");
+            }
+            System.out.println("\nSecond Component:");
+            for (int vertice: tree.secondVertices) {
+                System.out.print(impulses[vertice] + ", ");
+            }
+            System.out.println();
         }
         return result;
     }
@@ -168,16 +181,16 @@ public class Diagram {
         return result;
     }
 
-    private ArrayList<Edge> getCompletion(Tree tree) {
-        ArrayList<Edge> complementEdges = new ArrayList<>(edges);
-        complementEdges.removeAll(tree.edges);
+    private ArrayList<Edge> getCompletion(Collection<Edge> edges) {
+        ArrayList<Edge> complementEdges = new ArrayList<>(this.edges);
+        complementEdges.removeAll(edges);
         return complementEdges;
     }
 
     public ArrayList<ArrayList<Edge>> getCompletion(ArrayList<Tree> trees) {
         ArrayList<ArrayList<Edge>> result = new ArrayList<>();
         for (Tree tree:trees) {
-            result.add(getCompletion(tree));
+            result.add(getCompletion(tree.edges));
         }
         return result;
     }
@@ -187,7 +200,11 @@ public class Diagram {
             Scanner scanner = new Scanner(new File("Diagram.dat"));
             n = scanner.nextInt();
             edges = new ArrayList<>();
+            impulses = new String[4];
             int number = 1;
+            scanner.nextLine();
+            for (int i = 0; i < n; i++)
+                impulses[i] = scanner.nextLine();
             while (scanner.hasNextInt()) {
                 int a = scanner.nextInt();
                 int b = scanner.nextInt();
