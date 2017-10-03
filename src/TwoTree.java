@@ -1,9 +1,12 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.stream.IntStream;
 
 public class TwoTree {
     TreeSet<Edge> edges;
     HashSet<Integer> firstVertices, secondVertices;
+    ArrayList<Integer> impulses;
 
     private void color(TreeSet<Edge> edges, Edge edge) {
         firstVertices.add(edge.a);
@@ -26,6 +29,26 @@ public class TwoTree {
         firstVertices = new HashSet<>();
         secondVertices = new HashSet<>();
         color(edges, bridge);
+        impulses = new ArrayList<>();
+    }
+
+    public void findImpulse(int[] p) {
+        HashSet<Integer> vertices = new HashSet<>();
+        for (int i =0; i < p.length; i++) {
+            if (p[i] == -1) {
+                if (firstVertices.contains(i)) vertices = secondVertices;
+                else vertices = firstVertices;
+            }
+        }
+        for (int vertice: vertices) {
+            if (p[vertice] != 0) {
+                impulses.add(p[vertice]);
+            }
+        }
+    }
+
+    public boolean isZero() {
+        return impulses.isEmpty();
     }
 
     @Override

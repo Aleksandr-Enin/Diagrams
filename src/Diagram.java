@@ -2,12 +2,13 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Diagram {
     ArrayList<Edge> edges;
     ArrayList<Tree> trees;
     HashSet<TwoTree> doubleTrees;
-    String[] impulses;
+    int[] impulses;
     int n;
 
     public Diagram() {
@@ -16,7 +17,11 @@ public class Diagram {
         doubleTrees = new HashSet<>();
         for (Tree tree: trees) {
             for (Edge edge: tree.edges) {
-                doubleTrees.add(new TwoTree(tree, edge));
+                TwoTree twoTree =  new TwoTree(tree, edge);
+                twoTree.findImpulse(impulses);
+                if (!twoTree.isZero()) {
+                    doubleTrees.add(twoTree);
+                }
             }
         }
     }
@@ -148,23 +153,21 @@ public class Diagram {
         return changed;
     }
 
-    public String V() {
-        System.out.println("Trees found: " + doubleTrees.size());
+    public String v() {
         String result = "";
+        System.out.println("Trees found: " + doubleTrees.size());
         for (TwoTree tree: doubleTrees) {
+            result += "(";
             //result += tree;
+/*            for (int p: tree.impulses) {
+                result += "p_" + p + " + ";
+            }*/
+            result += tree.impulses.stream().map(p -> "p_" + p).collect(Collectors.joining(" + ")).toString();
+            result += ")^2 * (";
             for (Edge edge: getCompletion(tree.edges)) {
-                System.out.print(edge.number);
+                result+= edge.number;
             }
-            System.out.println("\nFirst component");
-            for (int vertice: tree.firstVertices) {
-                System.out.print(impulses[vertice] + ", ");
-            }
-            System.out.println("\nSecond Component:");
-            for (int vertice: tree.secondVertices) {
-                System.out.print(impulses[vertice] + ", ");
-            }
-            System.out.println();
+            result += ") + ";
         }
         return result;
     }
@@ -200,11 +203,10 @@ public class Diagram {
             Scanner scanner = new Scanner(new File("Diagram.dat"));
             n = scanner.nextInt();
             edges = new ArrayList<>();
-            impulses = new String[4];
+            impulses = new int[n];
             int number = 1;
-            scanner.nextLine();
             for (int i = 0; i < n; i++)
-                impulses[i] = scanner.nextLine();
+                impulses[i] = scanner.nextInt();
             while (scanner.hasNextInt()) {
                 int a = scanner.nextInt();
                 int b = scanner.nextInt();
